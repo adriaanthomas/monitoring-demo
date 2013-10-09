@@ -20,7 +20,7 @@ SECRET_KEY = 'fksxme)%84kLKJFLdfhfslsvmcRIUnvlsldguLQ#dklfc'
 # Set your local timezone (Django's default is America/Chicago)
 # If your graphs appear to be offset by a couple hours then this probably
 # needs to be explicitly set to your local timezone.
-#TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'Europe/Amsterdam' # cannot use a template with our graphite puppet module
 
 # Override this to provide documentation specific to your Graphite deployment
 #DOCUMENTATION_URL = "http://graphite.readthedocs.org/"

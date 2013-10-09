@@ -19,3 +19,6 @@
 [submodule "puppet/modules/wget"]
 	path = puppet/modules/wget
 	url = https://github.com/maestrodev/puppet-wget.git
+[submodule "puppet/modules/timezone"]
+	path = puppet/modules/timezone
+	url = https://github.com/saz/puppet-timezone.git

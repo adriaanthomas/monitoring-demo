@@ -1,6 +1,7 @@
 # site.pp
 
 node monitoring {
+  include timezone
   include epel
   include iptables
   include apache
@@ -14,4 +15,5 @@ node monitoring {
   Yumrepo <| |> -> Package <| |>
 
   Class['iptables'] -> Class['apache']
+  Class['timezone'] -> Class['graphite']
 }
