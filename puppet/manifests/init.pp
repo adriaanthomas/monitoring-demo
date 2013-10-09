@@ -11,9 +11,10 @@ node monitoring {
   include local_elasticsearch
   include local_logstash
   include kibana
+  include tomcat
 
   Yumrepo <| |> -> Package <| |>
 
-  Class['iptables'] -> Class['apache']
+  Class['iptables'] -> Class['apache', 'tomcat']
   Class['timezone'] -> Class['graphite']
 }
