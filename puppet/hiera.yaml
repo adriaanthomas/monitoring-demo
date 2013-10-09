@@ -1,0 +1,9 @@
+---
+backends: yaml
+:yaml:
+  # this is relative to the 'puppet.manifests_path' directory as specified in Vagrantfile
+  :datadir: hieradata
+:hierarchy:
+  - "%{clientcert}"
+  - common
+:logger: puppet
