@@ -1,0 +1,4 @@
+---
+graphite::carbon_cache_enable: true
+graphite::carbon_graphite_file: 'puppet:///modules/local_graphite/carbon.conf'
+graphite::web_local_settings_file: 'puppet:///modules/local_graphite/local_settings.py'
