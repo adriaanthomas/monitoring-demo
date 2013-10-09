@@ -2,3 +2,23 @@
 graphite::carbon_cache_enable: true
 graphite::carbon_graphite_file: 'puppet:///modules/local_graphite/carbon.conf'
 graphite::web_local_settings_file: 'puppet:///modules/local_graphite/local_settings.py'
+
+elasticsearch::config:
+  'cluster.name': monitoring
+#  'discovery.zen.ping.multicast.enabled': false
+#  'discovery.zen.ping.unicast.hosts': localhost
+elasticsearch::service_settings:
+  ES_USER: elasticsearch
+  ES_GROUP: elasticsearch
+  ES_HOME: /usr/share/elasticsearch
+  MAX_OPEN_FILES: 65535
+  LOG_DIR: /var/log/elasticsearch
+  DATA_DIR: /var/lib/elasticsearch/data
+  WORK_DIR: /tmp/elasticsearch
+  CONF_DIR: /etc/elasticsearch
+  CONF_FILE: /etc/elasticsearch/elasticsearch.yml
+
+logstash::provider: custom
+logstash::jarfile: 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.1-flatjar.jar'
+
+logstash::sincedb_path: /var/lib/logstash

@@ -1,7 +1,9 @@
 # Helper class for our CentOS Graphite install.
 # Makes a few assumptions, not very modular.
 # Note that we also modify some settings through hiera.
-class local_graphite {
+class local_graphite (
+  $sincedb_path = hiera('logstash::sincedb_path')
+) {
   include graphite
 
   Class['graphite'] ~> Service['httpd']
@@ -29,5 +31,17 @@ class local_graphite {
     mode    => 0444,
     notify  => Service['httpd'],
     require => Package['graphite-web'],
+  }
+
+  logstash::input::file { 'graphite-httpd-logs':
+    path         => ['/var/log/httpd/graphite-web-access.log', '/var/log/httpd/graphite-web-error.log'],
+    type         => 'access-log',
+    sincedb_path => $sincedb_path,
+  }
+
+  logstash::input::file { 'graphite-web-logs':
+    path         => ['/var/log/graphite-web/*.log'],
+    type         => 'graphite-web',
+    sincedb_path => $sincedb_path,
   }
 }
