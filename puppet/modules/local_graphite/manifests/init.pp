@@ -45,5 +45,5 @@ class local_graphite (
     sincedb_path => $sincedb_path,
   }
 
-  include local_graphite::petclinic
+  include local_graphite::carbon::config
 }
