@@ -44,4 +44,6 @@ class local_graphite (
     type         => 'graphite-web',
     sincedb_path => $sincedb_path,
   }
+
+  include local_graphite::petclinic
 }
