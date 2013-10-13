@@ -4,9 +4,6 @@
 [submodule "puppet/modules/stdlib"]
 	path = puppet/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
-[submodule "puppet/modules/file_concat"]
-	path = puppet/modules/file_concat
-	url = https://github.com/electrical/file_concat.git
 [submodule "puppet/modules/graphite"]
 	path = puppet/modules/graphite
 	url = https://github.com/adriaanthomas/puppet-graphite.git
