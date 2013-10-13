@@ -19,3 +19,6 @@
 [submodule "puppet/modules/timezone"]
 	path = puppet/modules/timezone
 	url = https://github.com/saz/puppet-timezone.git
+[submodule "puppet/modules/file_concat"]
+	path = puppet/modules/file_concat
+	url = https://github.com/electrical/puppet-lib-file_concat.git
