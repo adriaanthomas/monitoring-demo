@@ -19,3 +19,6 @@
 [submodule "puppet/modules/file_concat"]
 	path = puppet/modules/file_concat
 	url = https://github.com/electrical/puppet-lib-file_concat.git
+[submodule "puppet/modules/logstash"]
+	path = puppet/modules/logstash
+	url = https://github.com/logstash/puppet-logstash.git
