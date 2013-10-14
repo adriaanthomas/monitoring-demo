@@ -24,3 +24,4 @@ logstash::provider: custom
 logstash::jarfile: 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.1-flatjar.jar'
 
 logstash::sincedb_path: /var/lib/logstash
+logstash::patterns_dir: /etc/logstash/patterns

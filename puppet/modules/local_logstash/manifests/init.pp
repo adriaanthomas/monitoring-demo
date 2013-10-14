@@ -1,17 +1,26 @@
 class local_logstash (
-  $sincedb_path = hiera('logstash::sincedb_path')
+  $sincedb_path = hiera('logstash::sincedb_path'),
+  $patterns_dir = hiera('logstash::patterns_dir')
 ) {
   require java
   require elasticsearch
 
   include logstash
 
+  File {
+    owner => root,
+    group => root,
+  }
+
   file { $sincedb_path:
     ensure => directory,
-    owner  => root,
-    group  => root,
-    mode   => 0755,
+    mode   => 0750,
     before => Class['logstash'],
+  }
+
+  file { $patterns_dir:
+    ensure => directory,
+    mode   => 0755,
   }
 
   logstash::output::elasticsearch { 'local':

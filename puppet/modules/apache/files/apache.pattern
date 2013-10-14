@@ -1,0 +1,2 @@
+# Logstash grok patterns for apache log files
+APACHE_ERROR_LOG_DATESTAMP %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}

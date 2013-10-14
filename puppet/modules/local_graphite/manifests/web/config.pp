@@ -34,9 +34,15 @@ class local_graphite::web::config (
     require => Package['graphite-web'],
   }
 
-  logstash::input::file { 'graphite-httpd-logs':
-    path         => ['/var/log/httpd/graphite-web-access.log', '/var/log/httpd/graphite-web-error.log'],
-    type         => 'access-log',
+  logstash::input::file { 'graphite-apache-access-log':
+    path         => ['/var/log/httpd/graphite-web-access.log'],
+    type         => 'apache-access-log',
+    sincedb_path => $sincedb_path,
+  }
+
+  logstash::input::file { 'graphite-apache-error-log':
+    path         => ['/var/log/httpd/graphite-web-error.log'],
+    type         => 'apache-error-log',
     sincedb_path => $sincedb_path,
   }
 
