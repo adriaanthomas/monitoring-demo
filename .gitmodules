@@ -4,9 +4,6 @@
 [submodule "puppet/modules/stdlib"]
 	path = puppet/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
-[submodule "puppet/modules/graphite"]
-	path = puppet/modules/graphite
-	url = https://github.com/adriaanthomas/puppet-graphite.git
 [submodule "puppet/modules/elasticsearch"]
 	path = puppet/modules/elasticsearch
 	url = https://github.com/elasticsearch/puppet-elasticsearch.git
