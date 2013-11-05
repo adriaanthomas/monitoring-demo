@@ -1,5 +1,6 @@
 class local_graphite::web::config (
-  $sincedb_path = hiera('logstash::sincedb_path')
+  $sincedb_path = hiera('logstash::sincedb_path'),
+  $patterns_dir = hiera('logstash::patterns_dir')
 ) {
   File {
     owner => root,
@@ -46,9 +47,42 @@ class local_graphite::web::config (
     sincedb_path => $sincedb_path,
   }
 
-  logstash::input::file { 'graphite-web-logs':
+  logstash::input::file { 'graphite-web':
     path         => ['/var/log/graphite-web/*.log'],
     type         => 'graphite-web',
     sincedb_path => $sincedb_path,
+  }
+
+  # Mon Oct 14 21:12:55 2013 :: graphite.wsgi - pid 5791 - reloading search index
+  # Mon Oct 14 21:12:56 2013 :: [IndexSearcher] performing initial index load
+  logstash::filter::grok { 'graphite-web':
+    type         => 'graphite-web',
+    patterns_dir => [$patterns_dir],
+    order        => 10,
+    match        => {
+      'message'  => '%{APACHE_ERROR_LOG_DATESTAMP:timestamp} :: %{GREEDYDATA:logmessage}',
+    },
+  }
+  logstash::filter::multiline { 'graphite-web':
+    type         => 'graphite-web',
+    pattern      => '^\[%{APACHE_ERROR_LOG_DATESTAMP}\] :: ',
+    negate       => true,
+    patterns_dir => [$patterns_dir],
+    what         => 'previous',
+    order        => 20,
+  }
+
+  # Mon Oct 14 21:12:55 2013
+  logstash::filter::date { 'graphite-web':
+    type   => 'graphite-web',
+    match  => ['timestamp', 'EEE MMM dd HH:mm:ss yyyy'],
+    locale => 'en',
+    order  => 30,
+  }
+
+  logstash::filter::mutate { 'graphite-web':
+    type   => 'graphite-web',
+    remove => ['timestamp'],
+    order  => 40,
   }
 }
