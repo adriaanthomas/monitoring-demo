@@ -12,15 +12,27 @@ class local_logstash (
     group => root,
   }
 
-  file { $sincedb_path:
-    ensure => directory,
+  define mkdir ($dir = $name, $owner = 'root', $group = 'root', $mode = 0555) {
+    exec { "mkdir-$dir":
+      command => "mkdir -p $dir",
+      creates => "$dir",
+      path    => '/usr/bin:/bin',
+    } ->
+
+    file { "$dir":
+      ensure => directory,
+      owner  => $owner,
+      group  => $group,
+      mode   => $mode,
+    }
+  }
+
+  mkdir { "$sincedb_path":
     mode   => 0750,
     before => Class['logstash'],
   }
 
-  file { $patterns_dir:
-    ensure => directory,
-    mode   => 0755,
+  mkdir { "$patterns_dir":
   }
 
   logstash::output::elasticsearch { 'local':

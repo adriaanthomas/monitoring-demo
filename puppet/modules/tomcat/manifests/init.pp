@@ -1,4 +1,6 @@
 class tomcat {
+  require local_logstash
+
   $sincedb_path = hiera('logstash::sincedb_path')
 
   File {
@@ -9,7 +11,7 @@ class tomcat {
 
   package { ['tomcat6', 'tomcat6-admin-webapps']:
     ensure => latest, # this will do for this demo
-  } ~>
+  } ->
 
   file { '/etc/tomcat6/tomcat-users.xml':
     source => "puppet:///modules/${module_name}/tomcat-users.xml",
@@ -17,8 +19,9 @@ class tomcat {
   }
 
   file { '/etc/tomcat6/server.xml':
-    source => "puppet:///modules/${module_name}/server.xml",
-    notify => Service['tomcat6'],
+    source  => "puppet:///modules/${module_name}/server.xml",
+    notify  => Service['tomcat6'],
+    require => Package['tomcat6'],
   }
 
   service { 'tomcat6':
@@ -36,5 +39,35 @@ class tomcat {
     path         => ['/var/log/tomcat6/localhost_access_log.*.txt'],
     type         => 'tomcat-access',
     sincedb_path => $sincedb_path,
+  }
+
+  # note that we have to escape the quotes
+  logstash::filter::grok { 'tomcat-access':
+    type        => 'tomcat-access',
+    match       => {
+      'message' => '%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-)',
+    },
+    order       => 10,
+  }
+
+  logstash::filter::multiline { 'tomcat':
+    type         => 'tomcat',
+    pattern      => '^\s',
+    what         => 'previous',
+    order        => 20,
+  }
+
+  logstash::filter::date { 'tomcat-access':
+    type          => 'tomcat-access',
+    match         => ['timestamp', 'dd/MMM/yyyy:HH:mm:ss Z'],
+    locale        => 'en',
+    order         => 30,
+    #remove_field => 'timestamp',
+  }
+
+  logstash::filter::mutate { 'tomcat-access':
+    type   => 'tomcat-access',
+    remove => ['timestamp'],
+    order  => 40,
   }
 }
