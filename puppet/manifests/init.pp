@@ -12,6 +12,7 @@ node monitoring {
   include local_logstash
   include kibana
   include tomcat
+  include statsd
 
   Yumrepo <| |> -> Package <| |>
 

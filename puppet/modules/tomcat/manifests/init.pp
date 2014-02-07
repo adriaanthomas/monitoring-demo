@@ -70,4 +70,10 @@ class tomcat {
     remove => ['timestamp'],
     order  => 40,
   }
+
+  logstash::output::statsd { 'tomcat-access':
+    increment => ['tomcat.response.%{response}'],
+    count     => { 'tomcat.bytes' => '%{bytes}' },
+    type      => 'tomcat-access',
+  }
 }

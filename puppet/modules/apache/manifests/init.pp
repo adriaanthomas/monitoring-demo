@@ -83,4 +83,10 @@ class apache (
     remove => ['timestamp'],
     order  => 40,
   }
+
+  logstash::output::statsd { 'apache':
+    increment => ['apache.response.${response}'],
+    count     => { 'apache.bytes' => '${bytes}' },
+    type      => 'apache-access-log',
+  }
 }
