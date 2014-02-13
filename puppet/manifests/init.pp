@@ -3,13 +3,13 @@
 node monitoring {
   include timezone
   include epel
-  include logstash_repo
+  include elasticsearch_repos
   include iptables
   include apache
   include local_graphite
   include java
   include wget
-  include local_elasticsearch
+  include elasticsearch
   include local_logstash
   include kibana
   include tomcat

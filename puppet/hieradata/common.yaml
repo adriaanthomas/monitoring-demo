@@ -11,11 +11,12 @@ elasticsearch::config:
     name: monitoring # TODO remove duplication of this value
 #  'discovery.zen.ping.multicast.enabled': false
 #  'discovery.zen.ping.unicast.hosts': localhost
-elasticsearch::service_settings:
+elasticsearch::init_defaults:
   ES_USER: elasticsearch
   ES_GROUP: elasticsearch
   ES_HOME: /usr/share/elasticsearch
   MAX_OPEN_FILES: 65535
+  MAX_MAP_COUNT: 262144 # see http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/_system_and_settings.html
   LOG_DIR: /var/log/elasticsearch
   DATA_DIR: /var/lib/elasticsearch/data
   WORK_DIR: /tmp/elasticsearch
