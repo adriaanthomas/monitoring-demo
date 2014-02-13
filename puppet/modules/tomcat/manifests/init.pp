@@ -29,51 +29,51 @@ class tomcat {
     enable => true,
   }
 
-  logstash::input::file { 'catalina.out':
-    path         => ['/var/log/tomcat6/catalina.out'],
-    type         => 'tomcat',
-    sincedb_path => $sincedb_path,
-  }
+  #logstash::input::file { 'catalina.out':
+  #  path         => ['/var/log/tomcat6/catalina.out'],
+  #  type         => 'tomcat',
+  #  sincedb_path => $sincedb_path,
+  #}
 
-  logstash::input::file { 'localhost_access_log':
-    path         => ['/var/log/tomcat6/localhost_access_log.*.txt'],
-    type         => 'tomcat-access',
-    sincedb_path => $sincedb_path,
-  }
+  #logstash::input::file { 'localhost_access_log':
+  #  path         => ['/var/log/tomcat6/localhost_access_log.*.txt'],
+  #  type         => 'tomcat-access',
+  #  sincedb_path => $sincedb_path,
+  #}
 
-  # note that we have to escape the quotes
-  logstash::filter::grok { 'tomcat-access':
-    type        => 'tomcat-access',
-    match       => {
-      'message' => '%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-)',
-    },
-    order       => 10,
-  }
+  ## note that we have to escape the quotes
+  #logstash::filter::grok { 'tomcat-access':
+  #  type        => 'tomcat-access',
+  #  match       => {
+  #    'message' => '%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-)',
+  #  },
+  #  order       => 10,
+  #}
 
-  logstash::filter::multiline { 'tomcat':
-    type         => 'tomcat',
-    pattern      => '^\s',
-    what         => 'previous',
-    order        => 20,
-  }
+  #logstash::filter::multiline { 'tomcat':
+  #  type         => 'tomcat',
+  #  pattern      => '^\s',
+  #  what         => 'previous',
+  #  order        => 20,
+  #}
 
-  logstash::filter::date { 'tomcat-access':
-    type          => 'tomcat-access',
-    match         => ['timestamp', 'dd/MMM/yyyy:HH:mm:ss Z'],
-    locale        => 'en',
-    order         => 30,
-    #remove_field => 'timestamp',
-  }
+  #logstash::filter::date { 'tomcat-access':
+  #  type          => 'tomcat-access',
+  #  match         => ['timestamp', 'dd/MMM/yyyy:HH:mm:ss Z'],
+  #  locale        => 'en',
+  #  order         => 30,
+  #  #remove_field => 'timestamp',
+  #}
 
-  logstash::filter::mutate { 'tomcat-access':
-    type   => 'tomcat-access',
-    remove => ['timestamp'],
-    order  => 40,
-  }
+  #logstash::filter::mutate { 'tomcat-access':
+  #  type   => 'tomcat-access',
+  #  remove => ['timestamp'],
+  #  order  => 40,
+  #}
 
-  logstash::output::statsd { 'tomcat-access':
-    increment => ['tomcat.response.%{response}'],
-    count     => { 'tomcat.bytes' => '%{bytes}' },
-    type      => 'tomcat-access',
-  }
+  #logstash::output::statsd { 'tomcat-access':
+  #  increment => ['tomcat.response.%{response}'],
+  #  count     => { 'tomcat.bytes' => '%{bytes}' },
+  #  type      => 'tomcat-access',
+  #}
 }

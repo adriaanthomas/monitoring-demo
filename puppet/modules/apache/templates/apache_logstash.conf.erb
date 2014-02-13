@@ -1,0 +1,61 @@
+input {
+  file {
+    path => ['/var/log/httpd/access.log']
+    type => 'apache-access-log'
+  }
+
+  file {
+    path => ['/var/log/httpd/error.log']
+    type => 'apache-error-log'
+  }
+}
+
+filter {
+  if [type] == 'apache-access-log' {
+
+    # note that we have to escape the quotes
+    grok {
+      match => ['message', '%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-)']
+    }
+
+    date {
+      match        => ['timestamp', 'dd/MMM/yyyy:HH:mm:ss Z']
+      locale       => 'en'
+      remove_field => 'timestamp'
+    }
+
+  } else if [type] == 'apache-error-log' {
+
+    grok {
+      match        => [
+        'message',
+	'\[%{APACHE_ERROR_LOG_DATESTAMP:timestamp}\] \[%{LOGLEVEL:level}\] %{GREEDYDATA:logmessage}'
+      ]
+      patterns_dir => ['<%= @patterns_dir %>']
+    }
+
+    # if there is more than one space after the log level,
+    # the line belongs to the previous line's data
+    multiline {
+      pattern      => '\[%{APACHE_ERROR_LOG_DATESTAMP:timestamp}\] \[%{LOGLEVEL:level}\]  '
+      patterns_dir => ['<%= @patterns_dir %>']
+      what         => 'previous'
+    }
+
+    # Sun Oct 13 22:41:41 2013
+    date {
+      match        => ['timestamp', 'EEE MMM dd HH:mm:ss yyyy']
+      locale       => 'en'
+      remove_field => 'timestamp'
+    }
+  }
+}
+
+output {
+  if [type] == 'apache-access-log' {
+    statsd {
+      increment => ['apache.response.${response}']
+      count     => { 'apache.bytes' => '${bytes}' }
+    }
+  }
+}

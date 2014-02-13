@@ -3,6 +3,7 @@
 node monitoring {
   include timezone
   include epel
+  include logstash_repo
   include iptables
   include apache
   include local_graphite

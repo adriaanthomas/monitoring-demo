@@ -5,8 +5,10 @@ graphite::carbon_cache_enable: true
 graphite::carbon_graphite_file: 'puppet:///modules/local_graphite/carbon.conf'
 graphite::web_local_settings_file: 'puppet:///modules/local_graphite/local_settings.py'
 
+elasticsearch::cluster_name: monitoring
 elasticsearch::config:
-  'cluster.name': monitoring
+  cluster:
+    name: monitoring # TODO remove duplication of this value
 #  'discovery.zen.ping.multicast.enabled': false
 #  'discovery.zen.ping.unicast.hosts': localhost
 elasticsearch::service_settings:
@@ -20,8 +22,9 @@ elasticsearch::service_settings:
   CONF_DIR: /etc/elasticsearch
   CONF_FILE: /etc/elasticsearch/elasticsearch.yml
 
-logstash::provider: custom
-logstash::jarfile: 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.1-flatjar.jar'
+logstash::restart_on_change: true
+logstash::init_defaults:
+  START: true
+  "export SINCEDB_DIR": /var/lib/logstash # this is ugly but for now it works...
 
-logstash::sincedb_path: /var/lib/logstash
-logstash::patterns_dir: /etc/logstash/patterns
+logstash::sincedb_path: /var/lib/logstash # TODO remove duplication of this value

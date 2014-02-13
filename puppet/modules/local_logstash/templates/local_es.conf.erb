@@ -1,0 +1,6 @@
+output {
+  elasticsearch {
+    cluster => '<%= @es_cluster_name %>'
+    host    => '<%= @es_host %>'
+  }
+}

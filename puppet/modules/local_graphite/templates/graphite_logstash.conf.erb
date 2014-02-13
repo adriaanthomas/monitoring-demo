@@ -1,0 +1,46 @@
+input {
+  file {
+    path => ['/var/log/httpd/graphite-web-access.log']
+    type => 'apache-access-log'
+  }
+
+  file {
+    path => ['/var/log/httpd/graphite-web-error.log']
+    type => 'apache-error-log'
+  }
+
+  file {
+    path => ['/var/log/graphite-web/*.log']
+    type => 'graphite-web'
+  }
+}
+
+filter {
+  if [type] == 'graphite-web' {
+    # Mon Oct 14 21:12:55 2013 :: graphite.wsgi - pid 5791 - reloading search index
+    # Mon Oct 14 21:12:56 2013 :: [IndexSearcher] performing initial index load
+    grok {
+      match => [
+        'message',
+	'%{APACHE_ERROR_LOG_DATESTAMP:timestamp} :: %{GREEDYDATA:logmessage}'
+      ]
+      patterns_dir => ['<%= @patterns_dir %>']
+      remove_field => ['message']
+    }
+
+    multiline {
+      pattern      => '^\[%{APACHE_ERROR_LOG_DATESTAMP}\] :: '
+      patterns_dir => ['<%= @patterns_dir %>']
+      negate       => true
+      what         => 'previous'
+    }
+
+    date {
+      match        => ['timestamp', 'EEE MMM dd HH:mm:ss yyyy']
+      locale       => 'en'
+      remove_field => 'timestamp'
+    }
+  }
+}
+
+
